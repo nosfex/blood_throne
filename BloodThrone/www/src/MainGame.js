@@ -58,12 +58,16 @@ MainGame.Game.prototype = {
         // Re-calculate scale mode and update screen size. This only applies if
         // ScaleMode is not set to RESIZE.
         this.scale.refresh();
+     
         
-        
+    },
+    
+    moveLeft : function()
+    {
+        this.player.body.velocity.x = -10;
     },
     update : function()
     {
-        
     },
 
     preload: function () {
@@ -95,6 +99,13 @@ MainGame.Game.prototype = {
         this.player.body.collideWorldBounds = true;
         this.player.body.bounce.y = 0.2;
         this.player.body.gravity.y = 200;
+        
+           
+        this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+        
+        this.keyLeft.onDown.add(moveLeft, this);
+        this.game.input.enabled = true;
     },
 
     gameResized: function (width, height) {
