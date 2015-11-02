@@ -1,12 +1,5 @@
 // GH: Player?
 
-Player = function(game, key)
-{
-    Phaser.Sprite.call(this, game, 0, 0, key);
-};
-
-Player.prototype = Object.create(Phaser.Sprite.prototype);
-Player.prototype.constructor = Player;
 /* jshint browser:true */
 // create BasicGame Class
 MainGame = {
@@ -18,6 +11,10 @@ MainGame.Game = function (game) {
     this.game = game;
 };
 
+
+
+MainGame.Game.prototype.keyLeft = {};
+MainGame.Game.prototype.keyRight = {};
 
 
 // set Game function prototype
@@ -61,13 +58,13 @@ MainGame.Game.prototype = {
      
         
     },
-    
-    moveLeft : function()
-    {
-        this.player.body.velocity.x = -10;
-    },
+
     update : function()
     {
+        if(this.game.input.keyboard.isDown(Phaser.Keyboard.A))
+        {
+           this.player.body.velocity.x -= 10;
+        }
     },
 
     preload: function () {
@@ -91,6 +88,7 @@ MainGame.Game.prototype = {
         
         
         this.player = this.add.sprite(this.world.centerX, this.world.height -100 , 'barbarian');
+        
         this.player.anchor.setTo(0.5, 0.5);
         this.game.physics.enable(this.player);
         // Set the anchor to the center of the sprite
@@ -100,13 +98,12 @@ MainGame.Game.prototype = {
         this.player.body.bounce.y = 0.2;
         this.player.body.gravity.y = 200;
         
-           
-        this.keyLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
-        this.keyRight = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
-        
-        this.keyLeft.onDown.add(moveLeft, this);
         this.game.input.enabled = true;
-    },
+        this.keyLeft = this.game.input.keyboard.addKey(Phaser.Key.A);
+        this.keyRight = this.game.input.keyboard.addKey(Phaser.Key.D);
+        
+        //this.keyLeft.onDown.add(moveLeft, this);
+     },
 
     gameResized: function (width, height) {
 

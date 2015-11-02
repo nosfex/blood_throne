@@ -10,6 +10,6 @@
     game.state.add('Game', BasicGame.Game);
     game.state.add('MainGame', MainGame.Game);
     //  Now start the Game state.
-    game.state.start('Game');
+    game.state.start('MainGame');
 
 })();
