@@ -61,9 +61,21 @@ MainGame.Game.prototype = {
 
     update : function()
     {
+        this.player.body.velocity.x = 0;
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.A))
         {
-           this.player.body.velocity.x -= 10;
+           this.player.body.velocity.x = -200;
+        }
+        
+        if(this.game.input.keyboard.isDown(Phaser.Keyboard.D))
+        {
+            this.player.body.velocity.x = 200;
+        }
+        
+        if(this.game.input.keyboard.isDown(Phaser.Keyboard.W) && this.game.time.now > this.timeBetweenJump)
+        {
+            this.player.body.velocity.y = -500;
+            this.timeBetweenJump = this.game.time.now + 1750;
         }
     },
 
@@ -96,12 +108,13 @@ MainGame.Game.prototype = {
       //  this.player.anchor.setTo(0.5. 0);
         this.player.body.collideWorldBounds = true;
         this.player.body.bounce.y = 0.2;
-        this.player.body.gravity.y = 200;
+        this.player.body.gravity.y = 1000;
+        this.player.body.maxVelocity.y = 500;
         
         this.game.input.enabled = true;
         this.keyLeft = this.game.input.keyboard.addKey(Phaser.Key.A);
         this.keyRight = this.game.input.keyboard.addKey(Phaser.Key.D);
-        
+        this.timeBetweenJump = 0;
         //this.keyLeft.onDown.add(moveLeft, this);
      },
 
