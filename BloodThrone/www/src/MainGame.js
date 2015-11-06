@@ -1,4 +1,18 @@
-// GH: Player?
+// GH: Enemy
+BaseEnemy = function(game, player)
+{
+    this.x = 20;
+    this.y = 100;
+    this.health = 1;
+    this.view = game.add.sprite(this.x, this.y, 'enemy_a');
+   
+    this.view.anchor.setTo(0.5, 0.5);
+    game.physics.enable(this.view);
+    this.view.body.collideWorldBounds = true;
+    this.view.body.gravity.y = 1000;
+    this.view.body.bounce.y = 0.5;
+     this.view.body.maxVelocity.y = 500;
+};
 
 /* jshint browser:true */
 // create BasicGame Class
@@ -11,11 +25,8 @@ MainGame.Game = function (game) {
     this.game = game;
 };
 
-
-
 MainGame.Game.prototype.keyLeft = {};
 MainGame.Game.prototype.keyRight = {};
-
 
 // set Game function prototype
 MainGame.Game.prototype = {
@@ -85,6 +96,8 @@ MainGame.Game.prototype = {
         // background and a loading bar)
         this.load.image('barbarian', 'asset/barbarian_b.png');
         this.load.image('bkg', 'asset/blood_sky.png');
+        
+        this.load.image('enemy_a', 'asset/enemy_a.png');
     },
 
     create: function () {
@@ -115,6 +128,11 @@ MainGame.Game.prototype = {
         this.keyLeft = this.game.input.keyboard.addKey(Phaser.Key.A);
         this.keyRight = this.game.input.keyboard.addKey(Phaser.Key.D);
         this.timeBetweenJump = 0;
+        
+        // GH: Enemy group
+        
+        this.enemies = [];
+        this.enemies.push(new BaseEnemy(this.game, this.player))
         //this.keyLeft.onDown.add(moveLeft, this);
      },
 
