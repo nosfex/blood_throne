@@ -11,7 +11,7 @@ BaseEnemy = function(game, player)
     this.view.body.collideWorldBounds = true;
     this.view.body.gravity.y = 1000;
     this.view.body.bounce.y = 0.5;
-     this.view.body.maxVelocity.y = 500;
+    this.view.body.maxVelocity.y = 500;
 };
 
 /* jshint browser:true */
@@ -88,9 +88,18 @@ MainGame.Game.prototype = {
             this.player.body.velocity.y = -500;
             this.timeBetweenJump = this.game.time.now + 1750;
         }
+        
+        
+        this.game.physics.arcade.collide(this.player, this.enemiesGroup, this.onCollide);
+    },
+    
+    onCollide : function()
+    {
+        this.player.body.velocity.y = -500;
     },
 
-    preload: function () {
+    preload: function () 
+    {
 
         // Here we load the assets required for our preloader (in this case a 
         // background and a loading bar)
@@ -100,7 +109,8 @@ MainGame.Game.prototype = {
         this.load.image('enemy_a', 'asset/enemy_a.png');
     },
 
-    create: function () {
+    create: function () 
+    {
         // Add logo to the center of the stage
     
         
@@ -132,7 +142,9 @@ MainGame.Game.prototype = {
         // GH: Enemy group
         
         this.enemies = [];
-        this.enemies.push(new BaseEnemy(this.game, this.player))
+        this.enemies.push(new BaseEnemy(this.game, this.player));
+        this.enemiesGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
+        this.enemiesGroup.add(this.enemies[0].view);
         //this.keyLeft.onDown.add(moveLeft, this);
      },
 
