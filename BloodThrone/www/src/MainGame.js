@@ -90,7 +90,7 @@ MainGame.Game.prototype = {
         }
         
         
-        this.game.physics.arcade.collide(this.player, this.enemiesGroup, this.onCollide);
+        this.game.physics.arcade.collide(this.player, this.enemiesGroup, this.onCollide, null, this);
     },
     
     onCollide : function()
