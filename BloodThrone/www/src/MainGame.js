@@ -125,16 +125,25 @@ MainGame.Game.prototype = {
         // Re-calculate scale mode and update screen size. This only applies if
         // ScaleMode is not set to RESIZE.
         this.scale.refresh();
+        
      },
 
     update : function()
     {
         this.updatePlayer();
+        
+        if(this.player.body.velocity.y > 0)
+            
+        {
+            console.log("GRAVITY");
+        }
         this.game.physics.arcade.collide(this.player, this.enemiesGroup, this.onCollideVsEnemies, null, this);
-        this.game.physics.arcade.collide(this.player, this.debrisGroup);
+        this.game.physics.arcade.collide(this.player, this.debrisGroup, this.onCollideVsDebris, null, this);
         this.game.physics.arcade.collide(this.debrisGroup, this.enemiesGroup);
         this.game.physics.arcade.collide(this.debrisGroup);
     },
+    
+    
     
     
     updatePlayer :function()
@@ -156,6 +165,14 @@ MainGame.Game.prototype = {
             this.timeBetweenJump = this.game.time.now + 750;
         }
 
+    },
+    
+    onCollideVsDebris :function(a, b)
+    {
+        
+        a.body.acceleration.y = 0;
+        a.body.velocity.y = 0;
+              
     },
     
     onCollideVsEnemies : function(a, b)
@@ -205,7 +222,8 @@ MainGame.Game.prototype = {
         this.player.body.checkCollision.up = false;
         this.player.body.checkCollision.right = false;
         this.player.body.checkCollision.left = false;
-           
+        
+        this.player.body.immovable = true;
         this.game.input.enabled = true;
         this.keyLeft = this.game.input.keyboard.addKey(Phaser.Key.A);
         this.keyRight = this.game.input.keyboard.addKey(Phaser.Key.D);
