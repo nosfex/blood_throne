@@ -6,9 +6,9 @@ Debris = function(game, owner)
     
     game.physics.enable(this);
     this.body.collideWorldBounds = true;
-    this.body.gravity.y = 1000;
-    this.body.bounce.y = 0.7;
-    this.body.maxVelocity.y = 1000;
+  //  this.body.gravity.y = 1000;
+    this.body.bounce.y = 0;
+    this.body.maxVelocity.y = 500;
     game.add.existing(this);
 };
 
@@ -28,7 +28,7 @@ BaseEnemy = function(game, context, player)
     this.anchor.setTo(0.5, 0.5);
     game.physics.enable(this);
     this.body.collideWorldBounds = true;
-    this.body.gravity.y = 1000;
+ //   this.body.gravity.y = 1000;
     this.body.bounce.y = 0.5;
     this.body.maxVelocity.y = 500;
     // GH: Adding the object to the scene
@@ -60,7 +60,7 @@ BaseEnemy.prototype.update = function()
         for(i = 0; i < 6 ;i++)
         {
             d = new Debris(this.game, this);
-            d.body.velocity.y = 1600;
+     //       d.body.velocity.y = 1600;
             d.body.velocity.x = i * 150 - 600;
             this._context.debrisGroup.add(d);
             
@@ -70,6 +70,24 @@ BaseEnemy.prototype.update = function()
         
         this.kill();
     }
+};
+
+// GH: Player
+
+Player = function(game, context)
+{
+        
+    Phaser.Sprite.call(this, game, game.world.centerX, game.world.height -100 , 'barbarian''enemy_a');
+    this.anchor.setTo(0.5, 0.5);
+    game.physics.enable(this.player);
+    this.body.collideWorldBounds = true;
+    this.body.bounce.y = 0;
+//       this.player.body.gravity.y = 1000;
+    this.body.maxVelocity.y = 500;
+    this.body.checkCollision.up = false;
+    this.body.checkCollision.right = false;
+    this.body.checkCollision.left = false;
+    game.add.existing(this);
 };
 /* jshint browser:true */
 // create BasicGame Class
@@ -125,27 +143,33 @@ MainGame.Game.prototype = {
         // Re-calculate scale mode and update screen size. This only applies if
         // ScaleMode is not set to RESIZE.
         this.scale.refresh();
-        
+        this.debugToggle = false;
      },
 
     update : function()
     {
-        this.updatePlayer();
+    
         
         if(this.player.body.velocity.y > 0)
-            
         {
-            console.log("GRAVITY");
+        //    console.log("GRAVITY" + this.player.body.acceleration.y);
         }
         this.game.physics.arcade.collide(this.player, this.enemiesGroup, this.onCollideVsEnemies, null, this);
-        this.game.physics.arcade.collide(this.player, this.debrisGroup, this.onCollideVsDebris, null, this);
+        this.game.physics.arcade.collide(this.player, this.debrisGroup, this.onCollideVsDebris, this.onPrecollideVsDebris, this);
         this.game.physics.arcade.collide(this.debrisGroup, this.enemiesGroup);
-        this.game.physics.arcade.collide(this.debrisGroup);
+        this.game.physics.arcade.collide(this.debrisGroup, this.debrisGroup,this.onCollideDebrisVsDebris, null, this);
+        
+            
+        this.updatePlayer();
+        
+        if(this.game.input.keyboard.isDown(Phaser.Keyboard.X))
+        {
+            this.debugToggle = !this.debugToggle;
+        }
     },
     
     
-    
-    
+     
     updatePlayer :function()
     {
         this.player.body.velocity.x = 0;
@@ -161,23 +185,44 @@ MainGame.Game.prototype = {
         
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.W) && this.game.time.now > this.timeBetweenJump)
         {
+          
+            console.log("BeforeJump" + this.player.body.velocity.y);
             this.player.body.velocity.y = -500;
+            console.log("AfterJump" + this.player.body.velocity.y);
             this.timeBetweenJump = this.game.time.now + 750;
         }
 
     },
     
-    onCollideVsDebris :function(a, b)
+    onCollideDebrisVsDebris : function(a, b)
     {
-        
+        //b.y = a.y - 64;  
+        b.body.velocity.y = 0;
+        a.body.velocity.y = 0;
+    },
+   
+    
+    onPrecollideVsDebris : function(a, b)
+    {
+         console.log("CollisionMod" + this.player.body.velocity.y);
+  /*      b.body.acceleration.y = 0;
+        b.body.velocity.y = 0;
         a.body.acceleration.y = 0;
         a.body.velocity.y = 0;
-              
+    */ 
+         
+    },
+    
+    onCollideVsDebris :function(a, b)
+    {
+         console.log("PreCollisionMod" + this.player.body.velocity.y);
+     //   this.player.body.velocity.y = 0;
+         console.log("PostCollisionMod" + this.player.body.velocity.y);
+   //       this.player.body.velocity.y = 0;
     },
     
     onCollideVsEnemies : function(a, b)
     {
-  //      this.player.body.velocity.y = -500;
         if(b.alive)
         {
             b.health--;
@@ -199,7 +244,7 @@ MainGame.Game.prototype = {
     {
         // Add logo to the center of the stage
     
-        
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
          this.bkg = this.add.sprite(
             this.world.centerX, // (centerX, centerY) is the center coordination
             this.world.centerY,
@@ -208,36 +253,36 @@ MainGame.Game.prototype = {
         this.bkg.anchor.setTo(0.5, 0.5);
         
         
-        this.player = this.add.sprite(this.world.centerX, this.world.height -100 , 'barbarian');
+      
+      
         
-        this.player.anchor.setTo(0.5, 0.5);
-        this.game.physics.enable(this.player);
-        // Set the anchor to the center of the sprite
-        //this.logo.anchor.setTo(0.5, 0.5);
-      //  this.player.anchor.setTo(0.5. 0);
-        this.player.body.collideWorldBounds = true;
-        this.player.body.bounce.y = 0.2;
-        this.player.body.gravity.y = 1000;
-        this.player.body.maxVelocity.y = 500;
-        this.player.body.checkCollision.up = false;
-        this.player.body.checkCollision.right = false;
-        this.player.body.checkCollision.left = false;
-        
-        this.player.body.immovable = true;
+        // GH: 
         this.game.input.enabled = true;
         this.keyLeft = this.game.input.keyboard.addKey(Phaser.Key.A);
         this.keyRight = this.game.input.keyboard.addKey(Phaser.Key.D);
         this.timeBetweenJump = 0;
         
         // GH: Enemy group
-        
         this.enemies = [];
         this.enemies.push(new BaseEnemy(this.game, this, this.player));
         this.enemiesGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
         this.enemiesGroup.add(this.enemies[0]);
         this.debrisGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
         //this.keyLeft.onDown.add(moveLeft, this);
+        this.game.physics.arcade.gravity.y = 1000;
      },
+    render :function()
+    {
+        if(this.debugToggle)
+        {
+            this.game.debug.bodyInfo(this.player)  ;
+            this.game.debug.body(this.player)  ;
+            for(i = 0; i < this.debrisGroup.length ; i++)
+            {
+                this.game.debug.body(this.debrisGroup.getChildAt(i));
+            }
+        }
+    },
 
     gameResized: function (width, height) {
 
