@@ -82,7 +82,6 @@ Player = function(game, context)
     game.physics.enable(this.player);
     this.body.collideWorldBounds = true;
     this.body.bounce.y = 0;
-//       this.player.body.gravity.y = 1000;
     this.body.maxVelocity.y = 500;
     this.body.checkCollision.up = false;
     this.body.checkCollision.right = false;
